@@ -1,0 +1,17 @@
+# 動画と生データは絶対に公開しない（自宅が映っている）
+*.MOV
+*.mov
+*.mp4
+*.m4v
+data/raw/
+data/accepted/
+data/lerobot/
+reports/overlay/
+outputs/
+# 環境・モデル（setup.sh で取り直せる）
+.venv/
+__pycache__/
+models/*.task
+# 転送確認の一時ファイル
+manifest_*.txt
+.DS_Store
