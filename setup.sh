@@ -8,7 +8,13 @@ if command -v apt >/dev/null 2>&1; then
   sudo apt install -y python3-venv ffmpeg libgl1 libglib2.0-0 libegl1 libgles2 curl
 fi
 
-python3 -m venv .venv
+# Python 3.12 を使う（requirements.txt の numpy==2.5.4 は 3.12 以上が必要。Ubuntu 24.04 の python3 は 3.12）
+PY=""
+for c in python3.12 python3; do
+  if "$c" -c "import sys; sys.exit(sys.version_info < (3, 12))" >/dev/null 2>&1; then PY=$c; break; fi
+done
+[ -n "$PY" ] || { echo "Python 3.12 以上が見つかりません"; exit 1; }
+"$PY" -m venv .venv
 .venv/bin/pip install --upgrade pip
 .venv/bin/pip install -r requirements.txt
 

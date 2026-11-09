@@ -28,5 +28,7 @@ multipass shell ego
 - iPhone の HEVC（.MOV）は Linux 版 OpenCV でもそのまま読めた。
 - 動画は `multipass transfer` でコピーし、sha256 が Mac 側と全件一致することを確認。
 - `score.py` の合否は Mac と5本とも一致（合格3／C の2本がブレで不合格）。
-- 数値は少しずれた（手の写り率で最大 +0.012、シャープネス ±0.2）。原因はライブラリのバージョン差（Mac: OpenCV 4.13.0 / MediaPipe 1.1.1、VM: 5.0.0 / 1.2.2）。`requirements.txt` を固定した。
+- 数値は少しずれた（手の写り率で最大 +0.012、シャープネス ±0.2）。最初はライブラリのバージョン差（Mac: OpenCV 4.13.0 / MediaPipe 1.1.1、VM: 5.0.0 / 1.2.2）を疑ったが、Mac でも 5.0.0 / 1.2.2 にそろえて回すと Mac の旧結果と完全に一致した。→ ずれは OS（macOS と Linux）の差。動画のデコードか MediaPipe の計算経路の違いと思われるが未確認。
+- 合否が変わらない程度のずれだが、基準ぎりぎりの動画では OS によって合否が割れうる。採点は1つの環境（Ubuntu）に決めて回すのが安全。
+- 再現のために固定するのは3段：手順（setup.sh）、ライブラリ（requirements.txt）、Python 本体（`.python-version` で 3.12.10）。Mac の `python3` が 3.11 で numpy 2.5.4 が入らなかったので、setup.sh は 3.12 以上を確かめてから venv を作るようにした。
 - `git diff` の `^M` は CSV の改行コード（CRLF）の表示。Mac 側も同じで差ではない。

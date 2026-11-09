@@ -6,17 +6,19 @@
   .venv/bin/python scripts/score.py --stride 1      # 全コマで手を検出（遅いが細かい）
 
 出力: reports/scores.csv（1動画1行）と、画面への集計。
+合格した動画は data/accepted/ にコピーする（verify_upload.sh の送り元）。
 閾値は入門ガイドの「判定基準」の初期値。自分のデータを見ながら調整する。
 """
 import argparse
 import csv
+import shutil
 from collections import Counter
 from pathlib import Path
 
 import cv2
 import numpy as np
 
-from common import RAW, SCORES, detect_hands, list_videos, load_metadata
+from common import RAW, ROOT, SCORES, detect_hands, list_videos, load_metadata
 
 # タスクごとの想定の長さ（秒）の上限。これの2倍を超えたら長すぎとみなす
 MAX_SEC = {"A": 40, "B": 60, "C": 30}
@@ -110,6 +112,12 @@ def main():
         w.writerows(rows)
 
     ok = [r for r in rows if r["accepted"] == "yes"]
+    # 合格分だけを data/accepted に置き直す（前回の残りが混ざらないよう毎回作り直す）
+    accepted_dir = ROOT / "data" / "accepted"
+    shutil.rmtree(accepted_dir, ignore_errors=True)
+    accepted_dir.mkdir(parents=True)
+    for r in ok:
+        shutil.copy2(Path(args.raw) / r["file_name"], accepted_dir / r["file_name"])
     total_min = sum(r["sec"] for r in rows) / 60
     ok_min = sum(r["sec"] for r in ok) / 60
     print(f"\n{len(rows)}本中 合格{len(ok)}本／不採用率 {1 - len(ok) / len(rows):.0%}")
@@ -122,7 +130,7 @@ def main():
         print(f"  {reason}: {c}本")
     if not load_metadata():
         print("※ metadata.csv が空なので、タスク別の基準（両手・長さ上限）と成否は判定していません")
-    print(f"\n書き出し: {args.out}")
+    print(f"\n書き出し: {args.out}／合格 {len(ok)}本を {accepted_dir} にコピー")
 
 
 if __name__ == "__main__":
