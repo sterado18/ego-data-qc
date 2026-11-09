@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# verify_upload.sh — 送ったデータが全部・壊れずに届いたかを確かめる（11/8 に完成させる）
+# verify_upload.sh — 送ったデータが全部・壊れずに届いたかを確かめる
 # 使い方: BUCKET=自分のバケット名 bash verify_upload.sh
 set -euo pipefail
 SRC="data/accepted"
@@ -9,6 +9,7 @@ SUM="shasum -a 256"; command -v sha256sum >/dev/null && SUM="sha256sum"
 (cd "$SRC" && $SUM * | sort) > manifest_local.txt
 aws s3 sync "$SRC" "$DEST"
 TMP=$(mktemp -d)
+trap 'rm -rf "$TMP"' EXIT   # 取り直した動画を終了時に消す（自宅が映っているので残さない）
 aws s3 sync "$DEST" "$TMP"
 (cd "$TMP" && $SUM * | sort) > manifest_remote.txt
 
