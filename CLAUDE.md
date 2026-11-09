@@ -25,7 +25,7 @@ Python・AWS は実務経験あり。Ubuntu は練習中。
 - ✅ 11/5 Ubuntu（Multipass）で基本操作 → notes/linux.md
 - ✅ 11/9 VM で setup.sh → score.py、Mac と合否一致を確認 → notes/linux.md
 - ✅ 11/9 verify_upload.sh 完成、S3（ego-data-qc-sterado18）で件数・容量・指紋 OK
-- 11/10 lerobot-eval で PushT 推論（モデル形式の変換で停止中）→ experiments/log.md
+- ✅ 11/10 lerobot-eval で PushT 推論 10回中6回成功 → experiments/log.md（失敗の様子は動画で追記）
 - 11/11 予備日
 - 11/12 撮影の段取り（30本のタスクと順番を metadata.csv で確定）
 - 11/14 30本撮影 → 不採用率を理由別に集計
