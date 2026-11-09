@@ -1,5 +1,6 @@
 # 検品に必要な最小構成。LeRobot 変換（scripts/convert.py）は別途 pip install lerobot
-opencv-python-headless
-mediapipe
-numpy
-pandas
+# バージョン固定：2026-11-09 に Ubuntu 24.04（VM）で再現を確認した組み合わせ
+opencv-python-headless==5.0.0.93
+mediapipe==1.2.2
+numpy==2.5.4
+pandas==3.1.1

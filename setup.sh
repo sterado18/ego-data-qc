@@ -4,7 +4,8 @@ set -euo pipefail   # 途中で失敗したらそこで止める
 
 if command -v apt >/dev/null 2>&1; then
   sudo apt update
-  sudo apt install -y python3-venv ffmpeg libgl1 libglib2.0-0 curl
+  # libegl1 / libgles2：MediaPipe が画面のない Ubuntu で動くのに必要（無いと libEGL.so.1 エラー）
+  sudo apt install -y python3-venv ffmpeg libgl1 libglib2.0-0 libegl1 libgles2 curl
 fi
 
 python3 -m venv .venv

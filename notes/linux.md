@@ -21,3 +21,12 @@ multipass shell ego
 ## つまずいたこと
 
 - `q` は `systemctl` / `journalctl` の画面（ページャ）の中で押すもの。シェルに戻ってから打つと `Command 'q' not found` になる。抜けるのは `Ctrl+C` でもよい。
+
+## 11/9 VM で再現（setup.sh → score.py）
+
+- `setup.sh` は通ったが、`check_env.py` で `libEGL.so.1` が無いと落ちた。MediaPipe は画面のない Ubuntu でも描画用ライブラリを使う → `libegl1 libgles2` を setup.sh に追加。
+- iPhone の HEVC（.MOV）は Linux 版 OpenCV でもそのまま読めた。
+- 動画は `multipass transfer` でコピーし、sha256 が Mac 側と全件一致することを確認。
+- `score.py` の合否は Mac と5本とも一致（合格3／C の2本がブレで不合格）。
+- 数値は少しずれた（手の写り率で最大 +0.012、シャープネス ±0.2）。原因はライブラリのバージョン差（Mac: OpenCV 4.13.0 / MediaPipe 1.1.1、VM: 5.0.0 / 1.2.2）。`requirements.txt` を固定した。
+- `git diff` の `^M` は CSV の改行コード（CRLF）の表示。Mac 側も同じで差ではない。
