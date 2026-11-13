@@ -32,7 +32,7 @@ Python・AWS は実務経験あり。Ubuntu は練習中。
 - ✅ 11/9 verify_upload.sh 完成、S3（ego-data-qc-sterado18）で件数・容量・指紋 OK
 - ✅ 11/10 lerobot-eval で PushT 推論 10回中6回成功 → experiments/log.md（失敗の様子は動画で追記）
 - 11/11 予備日
-- 11/12 撮影の段取り（30本のタスクと順番を metadata.csv で確定）
+- ✅ 11/13 撮影の段取り → notes/shooting.md（昼・自然光、A12・B10・C8）
 - 11/14 30本撮影 → 不採用率を理由別に集計
 - 11/15 1点だけ変えて15本撮り直し → 比較と起票表
 - 11/16〜17 README の数字と「分からなかったこと」を埋め、検証レポート PDF
