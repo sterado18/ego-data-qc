@@ -25,7 +25,9 @@ MAX_SEC = {"A": 40, "B": 60, "C": 30}
 MIN_SEC = 5
 HAND_MIN = 0.70    # 手の映り率の下限
 BOTH_MIN = 0.50    # 両手の映り率の下限（タオル＝タスクBのみ）
-BLUR_MAX = 0.20    # ブレたコマの割合の上限
+BLUR_MAX = 0.20    # ブレたコマの割合がこれを超えたら「要目視」（合否には使わない）
+# 鮮明さ（ラプラシアン分散）は輪郭の量なので、無地の床・黒い袖が多い画面でも低く出る。
+# 人の目のラベル20コマとの一致が 4/18 だったため、自動で落とさず人が確認する印にした（11/16）
 LIGHT_MAX = 0.10   # 暗すぎ・明るすぎのコマの割合の上限
 
 
@@ -60,8 +62,6 @@ def judge(m, meta):
         reasons.append("手の映り不足")
     if task == "B" and m["both"] < BOTH_MIN:
         reasons.append("両手の映り不足")
-    if m["blur"] > BLUR_MAX:
-        reasons.append("ブレ")
     if m["light"] > LIGHT_MAX:
         reasons.append("明るさ")
     if m["sec"] < MIN_SEC or (task in MAX_SEC and m["sec"] > MAX_SEC[task] * 2):
@@ -98,12 +98,14 @@ def main():
             continue
         meta = meta_all.get(path.name, {})
         reasons = judge(m, meta)
+        review = "ブレ" if m["blur"] > BLUR_MAX else ""
         rows.append(dict(file_name=path.name, episode_id=meta.get("episode_id", ""),
                          task=meta.get("task", ""), success=meta.get("success", "").strip(), **m,
                          accepted="yes" if not reasons else "no",
-                         reasons="／".join(reasons)))
+                         reasons="／".join(reasons), review=review))
         print(f"  {m['sec']}秒 手{m['hand']:.0%} 両手{m['both']:.0%} ブレ{m['blur']:.0%} "
-              f"明るさ{m['light']:.0%} → {'合格' if not reasons else '不採用：' + '／'.join(reasons)}")
+              f"明るさ{m['light']:.0%} → {'合格' if not reasons else '不採用：' + '／'.join(reasons)}"
+              f"{'（要目視：' + review + '）' if review else ''}")
 
     args.out.parent.mkdir(parents=True, exist_ok=True)
     with open(args.out, "w", encoding="utf-8-sig", newline="") as f:
@@ -125,6 +127,9 @@ def main():
     fail_ok = sum(r["success"] == "失敗" for r in ok)
     if fail_ok:
         print(f"  合格のうち失敗例（ラベル付きで採用）: {fail_ok}本")
+    n_review = sum(1 for r in rows if r["review"])
+    if n_review:
+        print(f"  要目視（ブレの疑い、合否には含めない）: {n_review}本")
     counts = Counter(x for r in rows for x in r["reasons"].split("／") if x)
     for reason, c in counts.most_common():
         print(f"  {reason}: {c}本")
