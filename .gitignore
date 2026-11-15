@@ -15,3 +15,5 @@ models/*.task
 # 転送確認の一時ファイル
 manifest_*.txt
 .DS_Store
+# 見るための一時ファイル（CSV から作り直せる）
+reports/views/
